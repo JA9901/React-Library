@@ -1,5 +1,5 @@
 import Footer from "./components/Footer";
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect, } from "react";
 import Nav from "./components/Nav";
 import { BrowserRouter as Router, Route } from "react-router-dom";
 import Home from "./pages/Home";
@@ -12,23 +12,7 @@ function App() {
   const [cart, setCart] = useState([]);
 
   function addToCart(book) {
-    const dupeItem = cart.find((item) => +item.id === +book.id);
-    if (dupeItem) {
-      setCart(
-        cart.map((item) => {
-          if (item.id === dupeItem.id) {
-            return {
-              ...item,
-              quantity: item.quantity + 1,
-            };
-          } else {
-            return item;
-          }
-        })
-      );
-    } else {
-      setCart([...cart, { ...book, quantity: 1 }]);
-    }
+    setCart([...cart, book])
   }
 
   useEffect(() => {
