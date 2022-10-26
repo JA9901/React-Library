@@ -12,13 +12,23 @@ import { counter } from "@fortawesome/fontawesome-svg-core";
 function App() {
   const [cart, setCart] = useState([]);
 
-  function addToCart(book) {
-    setCart([...cart, book])   
+  function addItemToCart(book) {
+    const dupeItem = cart.find((item) => item.id === book.id);
+    setCart((oldCart) =>
+      dupeItem
+        ? [
+            ...oldCart.map((item) => {
+              return item.id === dupeItem.id
+                ? {
+                    ...item,
+                    quantity: item.quantity + 1,
+                  }
+                : item;
+            }),
+          ]
+        : [...oldCart, { ...book, quantity: 1 }]
+    );
   }
-
-  useEffect(() => {
-    console.log(cart)
-  }, [cart])
 
   function updateCart(item, newQuantity) {
     setCart((oldCart) =>
@@ -76,7 +86,7 @@ function App() {
         <Route
           path="/books/:id"
           render={() => (
-            <BookInfo books={books} addToCart={addToCart} />
+            <BookInfo books={books} addItemToCart={addItemToCart} />
           )}
         />
         <Route
