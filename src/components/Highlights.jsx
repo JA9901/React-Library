@@ -1,10 +1,10 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Highlight from "./ui/Highlight";
 
 const Highlights = () => {
   return (
-    <section id="Highlights">
+    <section id="highlights">
       <div className="container">
         <div className="row">
           <h2 className="section__title">

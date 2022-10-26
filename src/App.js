@@ -1,51 +1,95 @@
-import Footer from "./components/Footer";
-import React, { useEffect, useState } from "react";
-import Nav from "./components/Nav";
+import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import Books from "./pages/Books";
-import { books } from "./data";
 import BookInfo from "./pages/BookInfo";
+import { books } from "./data";
+import Nav from "./components/Nav";
+import Footer from "./components/Footer";
 import Cart from "./pages/Cart";
+import { counter } from "@fortawesome/fontawesome-svg-core";
 
 function App() {
   const [cart, setCart] = useState([]);
 
   function addToCart(book) {
-    const dupeItem = cart.find((item) => +item.id === +book.id);
-    if (dupeItem) {
-      setCart(
-        cart.map((item) => {
-          if (item.id === dupeItem.id) {
-            return {
-              ...item,
-              quantity: item.quantity + 1,
-            };
-          } else {
-            return item;
-          }
-        })
-      );
-    } else {
-      setCart([...cart, { ...book, quantity: 1 }]);
-    }
+    setCart([...cart, book])   
   }
 
   useEffect(() => {
-    console.log(cart);
-  }, [cart]);
+    console.log(cart)
+  }, [cart])
+
+  function updateCart(item, newQuantity) {
+    setCart((oldCart) =>
+      oldCart.map((oldItem) => {
+        if (oldItem.id === item.id) {
+          return {
+            ...oldItem,
+            quantity: newQuantity,
+          };
+        } else {
+          return oldItem;
+        }
+      })
+    );
+  }
+
+  function removeItem(item) {
+    setCart((oldCart) => oldCart.filter((cartItem) => cartItem.id !== item.id));
+  }
+
+  function numberOfItems() {
+    let counter = 0;
+    cart.forEach((item) => {
+      counter += +item.quantity;
+    });
+    return counter;
+  }
+
+  function numberOfItems() {
+    let counter = 0;
+    cart.forEach((item) => {
+      counter += +item.quantity;
+    });
+    return counter;
+  }
+
+  function calcPrices() {
+    let total = 0;
+    cart.forEach((item) => {
+      total += (item.salePrice || item.originalPrice) * item.quantity;
+    });
+    return {
+      subtotal: total * 0.9,
+      tax: total * 0.1,
+      total,
+    };
+  }
 
   return (
     <Router>
       <div className="App">
-        <Nav />
-        <Route path="/" exact component={Home} />
+        <Nav numberOfItems={numberOfItems()} />
+        <Route path="/" exact render={() => <Home books={books} />} />
         <Route path="/books" exact render={() => <Books books={books} />} />
         <Route
           path="/books/:id"
-          render={() => <BookInfo books={books} addToCart={addToCart} />}
+          render={() => (
+            <BookInfo books={books} addToCart={addToCart} />
+          )}
         />
-        <Route path="/cart" render={() => <Cart books={books} />} />
+        <Route
+          path="/cart"
+          render={() => (
+            <Cart
+              cart={cart}
+              updateCart={updateCart}
+              removeItem={removeItem}
+              totals={calcPrices()}
+            />
+          )}
+        />
         <Footer />
       </div>
     </Router>
